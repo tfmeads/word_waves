@@ -179,7 +179,8 @@ class Letter {
       }
     }
     else{
-      this.velocity.add(wind);
+      let windFactor =  map(this.textSize,MAX_TEXT_SIZE/2,MAX_TEXT_SIZE,1.2,.5);
+      this.velocity.add(p5.Vector.mult(wind,windFactor));
       this.velocity.add(gravity);
     }
 
