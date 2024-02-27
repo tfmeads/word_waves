@@ -1,6 +1,7 @@
 const NUM_LETTERS = 333;
-const MAX_SPEED = 25;
+const MAX_SPEED = 35;
 const PADDING = 333;
+const MAX_TEXT_SIZE = 64;
 
 let letters = [];
 let grabbedLetters = [];
@@ -58,8 +59,7 @@ function keyTyped() {
     debug = !debug;
   }  
 
-  // uncomment to prevent any default behavior
-  // return false;
+  return false;
 }
 
 async function getFile(fileURL){
@@ -73,10 +73,10 @@ getFile('5letterwords.txt').then(content =>{
  // Using split method and passing "\n" as parameter for splitting
 words =  content.trim().split("\n");
 
-//add all permutations of word from 2-4 letters
+//add all permutations of word 
 for (let i = 0; i < words.length; i++) {
   let word = words[i];
-  for(let j = 2; j < 5; j++){
+  for(let j = 2; j < word.length; j++){
     let str = word.substr(0,j);
     //console.log(str);
     if(words.indexOf(str) === -1){
@@ -100,9 +100,11 @@ class Letter {
   }
 
   init(first){
+    //distribute around edges
     let x = random(-PADDING,PADDING);
     let y = random(-PADDING,PADDING);
 
+    //randomly distribute when first launched
     if(first){
       x += random(width);
       y += random(height);
@@ -110,9 +112,10 @@ class Letter {
     this.location = createVector(x,y);
     this.velocity = createVector(random(-5,5), 0);
     this.char = char(random(65, 90));
-    this.textSize = random(36,48);
+    this.textSize = random(MAX_TEXT_SIZE/2,MAX_TEXT_SIZE);
     this.fill = random(200,255);
     this.grabbed = false;
+    this.setMaxSpeed();
   }
 
   checkGrabbed(){
@@ -137,7 +140,7 @@ class Letter {
 
     if(this === element){return;}
 
-    let hit = collidePointPointVector(this.location, element.location, 50);
+    let hit = collidePointPointVector(this.location, element.location, 55);
 
     if(hit){
 
@@ -151,11 +154,18 @@ class Letter {
         }
 
         this.char = newStr;
+        this.textSize = (this.textSize + element.textSize) / 2;
+        this.setMaxSpeed();
+
         grabbedLetters.splice(grabbedLetters.indexOf(element), 1);
         element.init();
       }
     }
 
+  }
+
+  setMaxSpeed(){
+    this.maxSpeed = map(this.textSize,MAX_TEXT_SIZE/2,MAX_TEXT_SIZE,MAX_SPEED,MAX_SPEED/2);
   }
 
   move(){
@@ -173,7 +183,7 @@ class Letter {
       this.velocity.add(gravity);
     }
 
-    this.velocity.limit(MAX_SPEED);
+    this.velocity.limit(this.maxSpeed);
 
     this.location.add(this.velocity);
 
