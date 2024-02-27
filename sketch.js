@@ -166,6 +166,7 @@ class Letter {
 
   setMaxSpeed(){
     this.maxSpeed = map(this.textSize,MAX_TEXT_SIZE/2,MAX_TEXT_SIZE,MAX_SPEED,MAX_SPEED/2);
+    this.windFactor =  map(this.textSize,MAX_TEXT_SIZE/2,MAX_TEXT_SIZE,1.2,.5);
   }
 
   move(){
@@ -179,8 +180,7 @@ class Letter {
       }
     }
     else{
-      let windFactor =  map(this.textSize,MAX_TEXT_SIZE/2,MAX_TEXT_SIZE,1.2,.5);
-      this.velocity.add(p5.Vector.mult(wind,windFactor));
+      this.velocity.add(p5.Vector.mult(wind,this.windFactor));
       this.velocity.add(gravity);
     }
 
