@@ -48,7 +48,6 @@ function draw() {
 
   grabThreshold = map(mouseHeldTime,0,10000,0,3333);
 
-  
   wind.x = map(mouseX, 0, width, -0.1, 0.1);
   gravity.y = map(mouseY,height,0,.05,-.05);
 
@@ -179,12 +178,9 @@ class Letter {
     this.maxSpeed = map(this.textSize,MAX_TEXT_SIZE/2,MAX_TEXT_SIZE,MAX_SPEED,MAX_SPEED/2);
     this.windFactor =  map(this.textSize,MAX_TEXT_SIZE/2,MAX_TEXT_SIZE,1.2,.5);
   }
-
+  
   setColor(){
     this.fill = random(200,255);
-
-    //this.color = color(random(255),random(255),random(255));
-    // this.color = color(random(255),random(50,150),random(120,200));
     this.color = createVector(random(255),random(50,150),random(120,200));
   }
 
