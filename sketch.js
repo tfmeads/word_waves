@@ -12,6 +12,8 @@ let mouseStart, mouseHeldTime, mouseActive;
 let grabThreshold;
 let mouse;
 
+let highestSpeed = 0;
+
 let debug = false;
 
 function setup() {
@@ -26,7 +28,8 @@ function setup() {
 }
 
 function draw() {
-  background(255);
+  let blur = map(highestSpeed,0,MAX_SPEED,255,0);
+  background(255,blur);
 
   mouse = createVector(mouseX,mouseY);
 
@@ -48,6 +51,8 @@ function draw() {
   
   wind.x = map(mouseX, 0, width, -0.1, 0.1);
   gravity.y = map(mouseY,height,0,.05,-.05);
+
+  highestSpeed = 0;
   
   for(let i = 0; i < NUM_LETTERS; i++){
     letters[i].display();
@@ -154,15 +159,20 @@ class Letter {
           console.log(newStr + ": " + this.char + " hit " + element.char);
         }
 
-        this.char = newStr;
-        this.textSize = (this.textSize + element.textSize) / 2;
-        this.setMaxSpeed();
-
-        grabbedLetters.splice(grabbedLetters.indexOf(element), 1);
-        element.init();
+        this.onCollide(element);
       }
     }
 
+  }
+
+  onCollide(element){
+    this.char += element.char;
+    this.textSize = (this.textSize + element.textSize) / 2;
+    this.color.lerp(element.color,random(.25,.75));
+    this.setMaxSpeed();
+
+    grabbedLetters.splice(grabbedLetters.indexOf(element), 1);
+    element.init();
   }
 
   setMaxSpeed(){
@@ -174,7 +184,8 @@ class Letter {
     this.fill = random(200,255);
 
     //this.color = color(random(255),random(255),random(255));
-    this.color = color(random(255),random(50,150),random(120,200));
+    // this.color = color(random(255),random(50,150),random(120,200));
+    this.color = createVector(random(255),random(50,150),random(120,200));
   }
 
   move(){
@@ -193,6 +204,12 @@ class Letter {
     }
 
     this.velocity.limit(this.maxSpeed);
+
+    let speed = this.velocity.mag();
+
+    if(speed > highestSpeed){
+      highestSpeed = speed;
+    }
 
     this.location.add(this.velocity);
 
@@ -222,7 +239,7 @@ class Letter {
   
   display(){
     //fill(0,this.fill);
-    fill(this.color,this.fill);
+    fill(this.color.x,this.color.y,this.color.z,this.fill);
     textSize(this.textSize);
     text(this.char, this.location.x,this.location.y);
 
