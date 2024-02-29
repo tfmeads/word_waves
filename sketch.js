@@ -12,11 +12,12 @@ let mouseStart, mouseHeldTime, mouseActive;
 let grabThreshold;
 let mouse;
 
-
 let debug = false;
 
 function setup() {
-  createCanvas(windowWidth, windowHeight); for(let i = 0; i < NUM_LETTERS; i++){
+  createCanvas(windowWidth, windowHeight); 
+  
+  for(let i = 0; i < NUM_LETTERS; i++){
     letters[i] = new Letter();
   }
   
@@ -39,10 +40,10 @@ function draw() {
   }
   else{
     mouseActive = false;
-    //mouseHeldTime = 0;
+    mouseHeldTime = 0;
   }
 
-  grabThreshold = map(mouseHeldTime,0,10000,55,3333);
+  grabThreshold = map(mouseHeldTime,0,10000,0,3333);
 
   
   wind.x = map(mouseX, 0, width, -0.1, 0.1);
