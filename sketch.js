@@ -114,7 +114,7 @@ class Letter {
     this.velocity = createVector(random(-5,5), 0);
     this.char = char(random(65, 90));
     this.textSize = random(MAX_TEXT_SIZE/2,MAX_TEXT_SIZE);
-    this.fill = random(200,255);
+    this.setColor();
     this.grabbed = false;
     this.setMaxSpeed();
   }
@@ -170,6 +170,13 @@ class Letter {
     this.windFactor =  map(this.textSize,MAX_TEXT_SIZE/2,MAX_TEXT_SIZE,1.2,.5);
   }
 
+  setColor(){
+    this.fill = random(200,255);
+
+    //this.color = color(random(255),random(255),random(255));
+    this.color = color(random(255),random(50,150),random(120,200));
+  }
+
   move(){
 
     this.checkGrabbed();
@@ -214,7 +221,8 @@ class Letter {
   
   
   display(){
-    fill(0,this.fill);
+    //fill(0,this.fill);
+    fill(this.color,this.fill);
     textSize(this.textSize);
     text(this.char, this.location.x,this.location.y);
 
