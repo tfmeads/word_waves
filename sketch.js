@@ -1,6 +1,6 @@
 const NUM_LETTERS = 333;
 const MAX_SPEED = 35;
-const PADDING = 333;
+const PADDING = 0;
 const MAX_TEXT_SIZE = 64;
 
 let letters = [];
@@ -234,10 +234,8 @@ class Letter {
   
   
   display(){
-    //fill(0,this.fill);
     fill(this.color.x,this.color.y,this.color.z,this.fill);
     textSize(this.textSize);
     text(this.char, this.location.x,this.location.y);
-
   }
 }
