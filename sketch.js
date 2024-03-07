@@ -1,5 +1,6 @@
 const NUM_LETTERS = 333;
-const MAX_SPEED = 35;
+
+
 const PADDING = 0;
 const MAX_TEXT_SIZE = 64;
 
@@ -16,22 +17,24 @@ let highestSpeed = 0;
 
 let debug = false;
 
-const CC_VELOCITY = 41;
-var velocity = 64;
-const CC_ACCEL = 42;
+const CC_MAX_SPEED = 41;
+let MAX_SPEED = 55;
+let MIN_SPEED = 5;
+let currMaxSpeed = 35;
+
+let MAX_WIND = 0.5;
+let MIN_WIND = 0.05;
+let windSpeed = 0.1;
+const CC_WIND = 42;
 var acceleration = 64;
-const CC_FADE = 51;
+const CC_BLUR = 43;
+let minBlur = 0;
 var fade = 255;
-const CC_SIZE_A = 43;
+const CC_FONT_SIZE = 44;
 var size_a =  120;
-const CC_SIZE_B = 44;
-var size_b = 7;
-const CC_X1 = 61;
-var X1 = 85;
-const X1_MIN = 7;
-const X1_MAX = 200;
-const CC_X2 = 62;
-var X2 = 10;
+const CC_PERMABLUR = 14;
+let permablur = false;
+
 
 function setup() {
   createCanvas(windowWidth, windowHeight); 
@@ -50,7 +53,7 @@ function setup() {
 }
 
 function draw() {
-  let blur = map(highestSpeed,0,MAX_SPEED,255,0);
+  let blur = permablur ? 0 : map(highestSpeed,0,currMaxSpeed,255,minBlur);
   background(255,blur);
 
   mouse = createVector(mouseX,mouseY);
@@ -70,7 +73,7 @@ function draw() {
 
   grabThreshold = map(mouseHeldTime,0,10000,0,3333);
 
-  wind.x = map(mouseX, 0, width, -0.1, 0.1);
+  wind.x = map(mouseX, 0, width, -windSpeed,windSpeed);
   gravity.y = map(mouseY,height,0,.05,-.05);
 
   highestSpeed = 0;
@@ -126,33 +129,27 @@ function onMIDIMessage(data) {
 
 
   switch(msg.note){
-    case CC_VELOCITY:
-      velocity = 64 - msg.velocity;
-      console.log("Velocity " + velocity);
+    case CC_MAX_SPEED:
+      currMaxSpeed = map(msg.velocity,0,127,MIN_SPEED,MAX_SPEED);
+      if(debug){ console.log("Max Speed " + currMaxSpeed);}
       break;
-    case CC_ACCEL:
-      acceleration = msg.velocity / 20 + .1;
-      console.log("acceleration " + acceleration);
+    case CC_WIND:
+      windSpeed = map(msg.velocity,0,127,MIN_WIND,MAX_WIND);
+      if(debug){ console.log("Wind Speed " + acceleration);}
       break;
-    case CC_FADE:
-      fade = msg.velocity == 127 ? 255 : msg.velocity / 2;
-      console.log("FADE " + msg.velocity);
+    case CC_BLUR:
+      minBlur = map(msg.velocity,0,127,0,255);
+      if(debug){ console.log("FADE " + msg.velocity);}
       break;
-    case CC_SIZE_A:
+    case CC_FONT_SIZE:
       size_a = msg.velocity;
-      console.log("size_a " + msg.velocity);
+      if(debug){ console.log("size_a " + msg.velocity);}
       break;
-    case CC_SIZE_B:
-      size_b = msg.velocity;
-      console.log("size_b " + msg.velocity);
-      break;
-    case CC_X1:
-      X1 = map(msg.velocity,0,127,X1_MIN,X1_MAX);
-      console.log("x1 " + msg.velocity);
-      break;
-    case CC_X2:
-      X2 = msg.velocity;
-      console.log("x2 " + msg.velocity);
+    case CC_PERMABLUR:
+      if(msg.velocity > 0){
+        permablur = !permablur;
+        if(debug){ console.log("permablur " + permablur ? "On" : "Off");}
+      }
       break;
 
 

@@ -7,7 +7,7 @@ class Letter {
 
         midiInput = new MIDIInput();
         // Override onMIDIMessage callback with custom function
-        midiInput.onMIDIMessage = this.onMIDIMessage;
+        midiInput.onMIDIMessage = this.onMIDIMessage.bind(this);
     }
   
     init(first){
@@ -33,29 +33,19 @@ class Letter {
     
  onMIDIMessage(data) {
     let msg = new MIDI_Message(data.data);
-  
-  
+    
     switch(msg.note){
-      case CC_VELOCITY:
-        velocity = 64 - msg.velocity;
+      case CC_MAX_SPEED:
+        this.setMaxSpeed();
         break;
-      case CC_ACCEL:
-        acceleration = msg.velocity / 20 + .1;
+      case CC_WIND:
+        this.setMaxSpeed();
         break;
-      case CC_FADE:
+      case CC_BLUR:
         fade = msg.velocity == 127 ? 255 : msg.velocity / 2;
         break;
-      case CC_SIZE_A:
+      case CC_FONT_SIZE:
         size_a = msg.velocity;
-        break;
-      case CC_SIZE_B:
-        size_b = msg.velocity;
-        break;
-      case CC_X1:
-        X1 = map(msg.velocity,0,127,X1_MIN,X1_MAX);
-        break;
-      case CC_X2:
-        X2 = msg.velocity;
         break;
   
   
@@ -116,7 +106,7 @@ class Letter {
     }
   
     setMaxSpeed(){
-      this.maxSpeed = map(this.textSize,MAX_TEXT_SIZE/2,MAX_TEXT_SIZE,MAX_SPEED,MAX_SPEED/2);
+      this.maxSpeed = map(this.textSize,MAX_TEXT_SIZE/2,MAX_TEXT_SIZE,currMaxSpeed,currMaxSpeed/2);
       this.windFactor =  map(this.textSize,MAX_TEXT_SIZE/2,MAX_TEXT_SIZE,1.2,.5);
     }
     
